@@ -1,63 +1,66 @@
 #include "BST.h"
 
-BST::Node* BST::find(int data)
+bool BST::setRootNode(Node* root)
 {
-	return find(data, root);
+	this->root = root;
+	if(root != NULL)
+		root->setParent(NULL);
+	return true;
 }
 
-BST::Node* BST::find(int data, Node* thisNode)
+/*Node* BST::find(const int &data, Node* thisNode) const
+{
+	if(thisNode == NULL || data == thisNode->getData())
+		return thisNode;
+
+	Node* candidate = find(data,((data < thisNode->getData())?(thisNode->getLeftChild()):(thisNode->getRightChild())));
+	return ((candidate == NULL)?thisNode:candidate);
+}*/
+
+Node* BST::find(const int &data, Node* thisNode) const
 {
 	if(thisNode == NULL)
 		return NULL;
 
-	int thisData = thisNode->getData();
 	Node* candidate = thisNode;
 
-	if(data < thisData)
-	{
+	if(data < thisNode->getData())
 		candidate = find(data, thisNode->getLeftChild());
-		if(candidate == NULL)
-			candidate = thisNode;
-	}
 
-	if(data > thisData)
-	{
+	if(data > thisNode->getData())
 		candidate = find(data, thisNode->getRightChild());
-		if(candidate == NULL)
-			candidate = thisNode;
-	}
+
+	if(candidate == NULL)
+		candidate = thisNode;
 
 	return candidate;
+}
+
+Node* BST::getRootNode() const
+{
+	return root;
 }
 
 bool BST::add(int data)
 {
 	if(root == NULL)
-	{
-		setRoot(new Node(data));
-		return true;
-	}
+		return setRootNode(new Node(data));
 
-	Node* parentNode = find(data);
+	Node* parent = find(data, root);
 
-	if(data < parentNode->getData())
-	{
-		parentNode->setLeftChild(new Node(data));
-		return true;
-	}
+	if(data < parent->getData())
+		return parent->setLeftChild(new Node(data));
 
-	if(data > parentNode->getData())
-	{
-		parentNode->setRightChild(new Node(data));
-		return true;
-	}
+	if(data > parent->getData())
+		return parent->setRightChild(new Node(data));
 
+	//if(data == parent->getData()) // check not needed
 	return false;
 }
 
 bool BST::remove(int data)
 {
-	Node* thisNode = find(data);
+	Node* thisNode = find(data, root); // returns
 	if(thisNode->getData() != data)
 		return false;
 
@@ -66,16 +69,18 @@ bool BST::remove(int data)
 
 bool BST::remove(Node* thisNode)
 {
-	Node* parent = thisNode->getParent();
-	Node* replace = NULL;
-
+	// If this node has two children, find the node immediately smaller than thisNode
+	// Copy it's value over to thisNode
 	if(thisNode->getLeftChild() != NULL && thisNode->getRightChild() != NULL)
 	{
 		// iterate to the node immediately smaller than thisNode
+		Node* replace;
 		for(replace = thisNode->getLeftChild(); replace->getRightChild() != NULL; replace = replace->getRightChild());
 		thisNode->setData(replace->getData());
-		return remove(replace);
+		thisNode = replace;
 	}
+
+	Node* replace = NULL;
 
 	if(thisNode->getLeftChild() != NULL)
 		replace = thisNode->getLeftChild();
@@ -83,18 +88,21 @@ bool BST::remove(Node* thisNode)
 	if(thisNode->getRightChild() != NULL)
 		replace = thisNode->getRightChild();
 
-	// unlink and deallocate the node
-	if(parent == NULL)
-		setRoot(replace);
-
-	if(parent != NULL && parent->getLeftChild() == thisNode)
-		parent->setLeftChild(replace);
-
-	if(parent != NULL && parent->getRightChild() == thisNode)
-		parent->setRightChild(replace);
+	Node* parent = thisNode->getParent();
 
 	delete thisNode;
-	return true;
+
+	// unlink and deallocate the node
+	if(parent == NULL)
+		return setRootNode(replace);
+
+	if(parent->getLeftChild() == thisNode)
+		return parent->setLeftChild(replace);
+
+	if(parent->getRightChild() == thisNode)
+		return parent->setRightChild(replace);
+
+	throw runtime_error("BST incorrectly linked. Node not a child of parent.");
 }
 
 void BST::clear()
@@ -109,13 +117,11 @@ void BST::clear()
 
 void BST::clear(Node* thisNode)
 {
-	Node* leftChild = thisNode->getLeftChild();
-	if(leftChild != NULL)
-		clear(leftChild);
+	if(thisNode->getLeftChild() != NULL)
+		clear(thisNode->getLeftChild());
 
-	Node* rightChild = thisNode->getRightChild();
-	if(rightChild != NULL)
-		clear(rightChild);
+	if(thisNode->getRightChild() != NULL)
+		clear(thisNode->getRightChild());
 
 	delete thisNode;
 	return;
