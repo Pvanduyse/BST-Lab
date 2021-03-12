@@ -8,31 +8,31 @@ bool BST::setRootNode(Node* root)
 	return true;
 }
 
+//Functionally the same as the alternative, but subjectively harder to read
 /*Node* BST::find(const int &data, Node* thisNode) const
 {
 	if(thisNode == NULL || data == thisNode->getData())
 		return thisNode;
 
-	Node* candidate = find(data,((data < thisNode->getData())?(thisNode->getLeftChild()):(thisNode->getRightChild())));
-	return ((candidate == NULL)?thisNode:candidate);
+	Node* candidate = ((data < thisNode->getData()) ?
+		find(data, thisNode->getLeftChild()) : find(data, thisNode->getRightChild()));
+		
+	return ((candidate == NULL) ? thisNode : candidate);
 }*/
 
 Node* BST::find(const int &data, Node* thisNode) const
 {
-	if(thisNode == NULL)
-		return NULL;
+	if(thisNode == NULL || data == thisNode->getData())
+		return thisNode;
 
-	Node* candidate = thisNode;
-
+	Node* candidate;
 	if(data < thisNode->getData())
 		candidate = find(data, thisNode->getLeftChild());
-
-	if(data > thisNode->getData())
+	else
 		candidate = find(data, thisNode->getRightChild());
 
 	if(candidate == NULL)
-		candidate = thisNode;
-
+		return thisNode;
 	return candidate;
 }
 

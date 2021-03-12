@@ -22,7 +22,7 @@ public:
 
 	void setData(int data) { this->data = data; }
 
-	void setParent(Node* parent) { this->parent = parent; }
+	void setParent(Node* parent);
 
 	bool setLeftChild(Node* leftChild);
 

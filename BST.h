@@ -7,16 +7,6 @@ using namespace std;
 
 class BST : public BSTInterface
 {
-protected:
-	Node* root = NULL;
-
-	bool setRootNode(Node* root);
-
-	Node* find(const int &data, Node* thisNode) const;
-
-	bool remove(Node* thisNode);
-
-	void clear(Node* thisNode);
 
 public:
 	BST() {}
@@ -29,4 +19,16 @@ public:
 	bool remove(int data);
 
 	void clear();
+
+protected:
+	bool setRootNode(Node* root);
+
+	Node* find(const int &data, Node* thisNode) const;
+
+private:
+	Node* root = NULL;
+
+	bool remove(Node* thisNode);
+
+	void clear(Node* thisNode);
 };
