@@ -16,7 +16,7 @@ bool BST::setRootNode(Node* root)
 
 	Node* candidate = ((data < thisNode->getData()) ?
 		find(data, thisNode->getLeftChild()) : find(data, thisNode->getRightChild()));
-		
+	
 	return ((candidate == NULL) ? thisNode : candidate);
 }*/
 
@@ -64,11 +64,6 @@ bool BST::remove(int data)
 	if(thisNode->getData() != data)
 		return false;
 
-	return remove(thisNode);
-}
-
-bool BST::remove(Node* thisNode)
-{
 	// If this node has two children, find the node immediately smaller than thisNode
 	// Copy it's value over to thisNode
 	if(thisNode->getLeftChild() != NULL && thisNode->getRightChild() != NULL)
@@ -107,22 +102,15 @@ bool BST::remove(Node* thisNode)
 
 void BST::clear()
 {
-	if(root != NULL)
-	{
-		clear(root);
-		root = NULL;
-	}
-	return;
+	clear(root);
+	root = NULL;
 }
 
 void BST::clear(Node* thisNode)
 {
-	if(thisNode->getLeftChild() != NULL)
-		clear(thisNode->getLeftChild());
+	if(thisNode == NULL) return;
 
-	if(thisNode->getRightChild() != NULL)
-		clear(thisNode->getRightChild());
-
+	clear(thisNode->getLeftChild());
+	clear(thisNode->getRightChild());
 	delete thisNode;
-	return;
 }

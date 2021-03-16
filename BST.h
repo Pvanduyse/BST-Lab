@@ -28,7 +28,5 @@ protected:
 private:
 	Node* root = NULL;
 
-	bool remove(Node* thisNode);
-
 	void clear(Node* thisNode);
 };
